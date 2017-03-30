@@ -14,20 +14,20 @@ class ArtistViewController: UIViewController, UITableViewDataSource, UITableView
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var tableView: UITableView!
     
-    var artist = NSDictionary.init()
+    var artist:[String:Any] = [:]
     
-    var topSongs = NSArray.init()
-    var albums = NSArray.init()
-    var relatedArtists = NSArray.init()
+    var topSongs:[Any] = []
+    var albums:[Any] = []
+    var relatedArtists:[Any] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        artistLabel.text = artist.object(forKey: "name") as? String
+        artistLabel.text = artist["name"] as? String
         print(artist)
-        print(artist.object(forKey: "id") as! String)
-        guard let topSongsURL = URL(string: "https://api.spotify.com/v1/artists/\(artist.object(forKey: "id") as! String)/top-tracks?country=US") else { print("bad url"); return }
+        print(artist["id"] as! String)
+        guard let topSongsURL = URL(string: "https://api.spotify.com/v1/artists/\(artist["id"] as! String)/top-tracks?country=US") else { print("bad url"); return }
         
         let topSongsTask = URLSession.shared.dataTask(with: topSongsURL) { (data:Data?, response:URLResponse?, error:Error?) in
             guard error == nil else { print("\(error!)");return }
@@ -36,23 +36,29 @@ class ArtistViewController: UIViewController, UITableViewDataSource, UITableView
                 return
             }
             
-            guard let top = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else { return }
-            guard let songs = top.object(forKey: "tracks") as? NSArray else { return }
-            
-            self.topSongs = songs
-            
-            DispatchQueue.main.async {
+            do {
+                guard let top = try JSONSerialization.jsonObject(with: data, options: []) as? [String:Any] else { return }
+                guard let songs = top["tracks"] as? [Any] else { return }
                 
-                self.tableView.reloadData()
+                self.topSongs = songs
+                DispatchQueue.main.async {
+                    
+                    self.tableView.reloadData()
+                }
+            } catch let error {
+                print(error)
             }
+            
+            
         }
         
         topSongsTask.resume()
         
-        guard let images = artist.object(forKey: "images") as? NSArray else { print("couldn't do images");return }
+        guard let images = artist["images"] as? NSArray else { print("couldn't do images");return }
         guard let img = images[1] as? NSDictionary else {print("couldn't do img"); return }
         guard let imageURLString = img["url"] as? String else {print("bad image url string"); return}
         guard let imageURL = URL(string: imageURLString) else {print("bad image url"); return}
+        
         let imageTask = URLSession.shared.dataTask(with: imageURL) { (data:Data?, response:URLResponse?, error:Error?) in
             guard error == nil else {print(error!);return}
             guard let data = data else { print("data is empty"); return}
@@ -61,7 +67,46 @@ class ArtistViewController: UIViewController, UITableViewDataSource, UITableView
         
         imageTask.resume()
         
-        }
+        guard let albumsURL = URL(string: "https://api.spotify.com/v1/artists/\(artist["id"] as! String)/albums") else { print("bad albums url"); return }
+        
+        URLSession.shared.dataTask(with: albumsURL, completionHandler: { (data, response, error) in
+            guard error == nil else { print(error!); return}
+            guard let data = data else { print("data is empty"); return }
+        
+        
+            guard let top = try! JSONSerialization.jsonObject(with: data, options: []) as? [String:Any] else { print("couldn't parse json"); return }
+            
+            guard let albumResults = top["items"] as? [Any] else { self.albums = [ top ]; return }
+            
+            self.albums = albumResults
+            DispatchQueue.main.async {
+                
+                self.tableView.reloadData()
+            }
+            
+        }).resume()
+        
+        guard let relatedArtistsURL = URL(string: "https://api.spotify.com/v1/artists/\(artist["id"] as! String)/related-artists") else { print("bad related artists url"); return }
+        
+        URLSession.shared.dataTask(with: relatedArtistsURL, completionHandler: { (data, response, error) in
+            guard error == nil else { print(error!); return}
+            guard let data = data else { print("data is empty"); return }
+            
+            
+            guard let top = try! JSONSerialization.jsonObject(with: data, options: []) as? [String:Any] else { print("couldn't parse json"); return }
+            
+            guard let relatedArtistsResults = top["artists"] as? [Any] else { print("couldn't access artists"); return }
+            print(relatedArtistsResults)
+            self.relatedArtists = relatedArtistsResults
+            DispatchQueue.main.async {
+                
+                self.tableView.reloadData()
+            }
+            
+        }).resume()
+    }
+    
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -82,7 +127,16 @@ class ArtistViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: - Table View Data Source
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        switch section {
+        case 0:
+            return topSongs.count
+        case 1:
+            return albums.count
+        case 2:
+            return relatedArtists.count
+        default:
+            return 0
+        }
     }
     
     
@@ -91,9 +145,22 @@ class ArtistViewController: UIViewController, UITableViewDataSource, UITableView
         }
         
         if indexPath.row < topSongs.count && indexPath.section == 0 {
-            guard let song = topSongs[indexPath.row] as? NSDictionary else { return cell}
+            // top songs
+            guard let song = topSongs[indexPath.row] as? [String:Any] else { return cell}
             
             cell.textLabel?.text = song["name"] as? String
+        }
+        else if indexPath.row < albums.count && indexPath.section == 1 {
+            // albums
+            guard let album = albums[indexPath.row] as? [String:Any] else {return cell}
+            
+            cell.textLabel?.text = album["name"] as? String
+        }
+        else if indexPath.row < relatedArtists.count && indexPath.section == 2 {
+            // albums
+            guard let artist = relatedArtists[indexPath.row] as? [String:Any] else {return cell}
+            
+            cell.textLabel?.text = artist["name"] as? String
         }
         return cell
         

@@ -28,6 +28,8 @@ class ViewController: UIViewController, SPTAudioStreamingDelegate, SPTAudioStrea
         // Do any additional setup after loading the view.
         setup()
         NotificationCenter.default.addObserver(self, selector: #selector(updateAfterFirstLogin), name: Notification.Name(rawValue: "loginSuccessful"), object: nil)
+        updateAfterFirstLogin()
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
