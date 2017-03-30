@@ -322,6 +322,16 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
                 selectedArtist = artist
                 performSegue(withIdentifier: "showArtist", sender: self)
                 break
+            case 2:
+                guard let album = filteredTableAlbumsData[indexPath.row] as? [String:Any] else {return}
+                selectedAlbum = album
+                performSegue(withIdentifier: "showAlbum", sender: self)
+                break
+            case 3:
+                guard let playlist = filteredTablePlaylistsData[indexPath.row] as? [String:Any] else {return}
+                selectedPlaylist = playlist
+                performSegue(withIdentifier: "showPlaylist", sender: self)
+                break
             default:
                 print("other segment selected, do nothing")
             }
@@ -419,15 +429,21 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        self.searchController.searchBar.isHidden = true
         if segue.identifier == "showArtist" {
             guard let dest = segue.destination as? ArtistViewController else { return }
             dest.artist = self.selectedArtist
-            self.searchController.searchBar.isHidden = true
         } else if segue.identifier == "showTrack" {
             guard let dest = segue.destination as? TrackViewController else { return }
             dest.track = self.selectedTrack
-            self.searchController.searchBar.isHidden = true
-        } else {
+        } else if segue.identifier == "showAlbum" {
+            guard let dest = segue.destination as? AlbumViewController else {
+                return}
+                dest.album = self.selectedAlbum
+        } else if segue.identifier == "showPlaylist" {
+            guard let dest = segue.destination as? PlaylistViewController else { return }
+            dest.playlist = self.selectedPlaylist
+        }else {
             print("attempting unknown segue")
         }
     }

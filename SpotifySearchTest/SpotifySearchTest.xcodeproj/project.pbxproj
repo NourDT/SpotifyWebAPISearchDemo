@@ -18,6 +18,8 @@
 		CD1F0DD41E878B7600B7F6C0 /* SpotifyMetadata.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1F0DD11E878B7600B7F6C0 /* SpotifyMetadata.framework */; };
 		CD1F0DDF1E878CC400B7F6C0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1F0DDE1E878CC400B7F6C0 /* ViewController.swift */; };
 		CD29D50A1E8CA2DB001CFB8F /* TrackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD29D5091E8CA2DB001CFB8F /* TrackViewController.swift */; };
+		CD29D50C1E8CB4EF001CFB8F /* PlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD29D50B1E8CB4EF001CFB8F /* PlaylistViewController.swift */; };
+		CD29D50E1E8CB4F4001CFB8F /* AlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD29D50D1E8CB4F4001CFB8F /* AlbumViewController.swift */; };
 		CD798ECB1E8B2375002C3316 /* ArtistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD798ECA1E8B2375002C3316 /* ArtistViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +38,8 @@
 		CD1F0DD51E878B9A00B7F6C0 /* SpotifySearchTest-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SpotifySearchTest-Bridging-Header.h"; sourceTree = "<group>"; };
 		CD1F0DDE1E878CC400B7F6C0 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		CD29D5091E8CA2DB001CFB8F /* TrackViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackViewController.swift; sourceTree = "<group>"; };
+		CD29D50B1E8CB4EF001CFB8F /* PlaylistViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistViewController.swift; sourceTree = "<group>"; };
+		CD29D50D1E8CB4F4001CFB8F /* AlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumViewController.swift; sourceTree = "<group>"; };
 		CD798ECA1E8B2375002C3316 /* ArtistViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArtistViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -78,6 +82,8 @@
 				CD1F0DCD1E877D8800B7F6C0 /* TableViewCell.swift */,
 				CD1F0DDE1E878CC400B7F6C0 /* ViewController.swift */,
 				CD1F0DB51E8771D800B7F6C0 /* Main.storyboard */,
+				CD29D50B1E8CB4EF001CFB8F /* PlaylistViewController.swift */,
+				CD29D50D1E8CB4F4001CFB8F /* AlbumViewController.swift */,
 				CD798ECA1E8B2375002C3316 /* ArtistViewController.swift */,
 				CD29D5091E8CA2DB001CFB8F /* TrackViewController.swift */,
 				CD1F0DB81E8771D800B7F6C0 /* Assets.xcassets */,
@@ -166,7 +172,9 @@
 			files = (
 				CD1F0DCE1E877D8800B7F6C0 /* TableViewCell.swift in Sources */,
 				CD1F0DB21E8771D800B7F6C0 /* AppDelegate.swift in Sources */,
+				CD29D50C1E8CB4EF001CFB8F /* PlaylistViewController.swift in Sources */,
 				CD1F0DDF1E878CC400B7F6C0 /* ViewController.swift in Sources */,
+				CD29D50E1E8CB4F4001CFB8F /* AlbumViewController.swift in Sources */,
 				CD1F0DCC1E877D5600B7F6C0 /* TableViewController.swift in Sources */,
 				CD29D50A1E8CA2DB001CFB8F /* TrackViewController.swift in Sources */,
 				CD798ECB1E8B2375002C3316 /* ArtistViewController.swift in Sources */,
@@ -298,6 +306,7 @@
 				);
 				INFOPLIST_FILE = SpotifySearchTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "-objC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.apatrickstar.SpotifySearchTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SpotifySearchTest-Bridging-Header.h";
@@ -318,6 +327,7 @@
 				);
 				INFOPLIST_FILE = SpotifySearchTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "-objC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.apatrickstar.SpotifySearchTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SpotifySearchTest-Bridging-Header.h";
