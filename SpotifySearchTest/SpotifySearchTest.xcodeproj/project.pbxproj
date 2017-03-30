@@ -17,6 +17,7 @@
 		CD1F0DD31E878B7600B7F6C0 /* SpotifyAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1F0DD01E878B7600B7F6C0 /* SpotifyAuthentication.framework */; };
 		CD1F0DD41E878B7600B7F6C0 /* SpotifyMetadata.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1F0DD11E878B7600B7F6C0 /* SpotifyMetadata.framework */; };
 		CD1F0DDF1E878CC400B7F6C0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1F0DDE1E878CC400B7F6C0 /* ViewController.swift */; };
+		CD29D50A1E8CA2DB001CFB8F /* TrackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD29D5091E8CA2DB001CFB8F /* TrackViewController.swift */; };
 		CD798ECB1E8B2375002C3316 /* ArtistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD798ECA1E8B2375002C3316 /* ArtistViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +35,7 @@
 		CD1F0DD11E878B7600B7F6C0 /* SpotifyMetadata.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpotifyMetadata.framework; sourceTree = "<group>"; };
 		CD1F0DD51E878B9A00B7F6C0 /* SpotifySearchTest-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SpotifySearchTest-Bridging-Header.h"; sourceTree = "<group>"; };
 		CD1F0DDE1E878CC400B7F6C0 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		CD29D5091E8CA2DB001CFB8F /* TrackViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackViewController.swift; sourceTree = "<group>"; };
 		CD798ECA1E8B2375002C3316 /* ArtistViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArtistViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -77,6 +79,7 @@
 				CD1F0DDE1E878CC400B7F6C0 /* ViewController.swift */,
 				CD1F0DB51E8771D800B7F6C0 /* Main.storyboard */,
 				CD798ECA1E8B2375002C3316 /* ArtistViewController.swift */,
+				CD29D5091E8CA2DB001CFB8F /* TrackViewController.swift */,
 				CD1F0DB81E8771D800B7F6C0 /* Assets.xcassets */,
 				CD1F0DBA1E8771D800B7F6C0 /* LaunchScreen.storyboard */,
 				CD1F0DBD1E8771D800B7F6C0 /* Info.plist */,
@@ -165,6 +168,7 @@
 				CD1F0DB21E8771D800B7F6C0 /* AppDelegate.swift in Sources */,
 				CD1F0DDF1E878CC400B7F6C0 /* ViewController.swift in Sources */,
 				CD1F0DCC1E877D5600B7F6C0 /* TableViewController.swift in Sources */,
+				CD29D50A1E8CA2DB001CFB8F /* TrackViewController.swift in Sources */,
 				CD798ECB1E8B2375002C3316 /* ArtistViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

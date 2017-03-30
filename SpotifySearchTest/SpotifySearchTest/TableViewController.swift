@@ -17,12 +17,17 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
     var session:SPTSession!
     var player: SPTAudioStreamingController?
     
-    private var selectedArtist = NSDictionary()
+    private var selectedArtist:[String:Any] = [:]
+    private var selectedTrack:[String:Any] = [:]
+    private var selectedAlbum:[String:Any] = [:]
+    private var selectedPlaylist:[String:Any] = [:]
     
     // MARK: - Search Controller
-    var filteredTableTracksData:[NSDictionary] = []
-    var filteredTableArtistsData:[NSDictionary] = []
-    var tableData:[String] = []
+    var filteredTableTracksData:[Any] = []
+    var filteredTableArtistsData:[Any] = []
+    var filteredTableAlbumsData:[Any] = []
+    var filteredTablePlaylistsData:[Any] = []
+    var tableData:[Any] = []
     
     var searchController:UISearchController!
     
@@ -30,15 +35,79 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
         
         filteredTableArtistsData.removeAll()
         filteredTableTracksData.removeAll()
+        filteredTableAlbumsData.removeAll()
+        filteredTablePlaylistsData.removeAll()
         
         guard let searchText = searchController.searchBar.text  else { return }
         
         let formattedSearch = searchText.replacingOccurrences(of: " ", with: "+")
         
         switch segments.selectedSegmentIndex {
+        case 3:
+            let searchURL = URL(string:"https://api.spotify.com/v1/search?q=\(formattedSearch)&type=playlist")
+            let task = URLSession.shared.dataTask(with: searchURL!) { data, response, error in
+                guard error == nil else {
+                    print(error!)
+                    return
+                }
+                guard let data = data else {
+                    print("Data is empty")
+                    return
+                }
+                
+                
+                do {
+                    guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String:Any] else {print("cannot parse JSON"); return}
+                    
+                    guard let wrapper = json["playlists"] as? [String:Any] else { print("cannot access tracks"); return }
+                    
+                    guard let playlists = wrapper["items"] as? [Any] else { print("cannot make array from all items"); return }
+                    
+                    self.filteredTablePlaylistsData = playlists
+                    DispatchQueue.main.async {
+                        
+                        self.tableView.reloadData()
+                    }
+                } catch let error {
+                    print(error)
+                }
+            }
+            task.resume()
+            break
+        case 2:
+            
+            let searchURL = URL(string:"https://api.spotify.com/v1/search?q=\(formattedSearch)&type=album")
+            let task = URLSession.shared.dataTask(with: searchURL!) { data, response, error in
+                guard error == nil else {
+                    print(error!)
+                    return
+                }
+                guard let data = data else {
+                    print("Data is empty")
+                    return
+                }
+                
+                
+                do {
+                    guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String:Any] else {print("cannot parse JSON"); return}
+                
+                guard let wrapper = json["albums"] as? [String:Any] else { print("cannot access tracks"); return }
+                
+                guard let albums = wrapper["items"] as? [Any] else { print("cannot make array from all items"); return }
+                
+                    self.filteredTableAlbumsData = albums
+                    DispatchQueue.main.async {
+                    
+                    self.tableView.reloadData()
+                    }
+                } catch let error {
+                    print(error)
+                }
+            }
+            task.resume()
+            break
         case 1:
             
-            filteredTableArtistsData.removeAll()
             
             let searchURL = URL(string:"https://api.spotify.com/v1/search?q=\(formattedSearch)&type=artist")
             
@@ -52,16 +121,13 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
                     return
                 }
                 
-                let json = try! JSONSerialization.jsonObject(with: data, options: []) as! NSDictionary
+                let json = try! JSONSerialization.jsonObject(with: data, options: []) as! [String:Any]
                 
-                guard let wrapper = json.value(forKey: "artists") as? NSDictionary else { print("cannot access tracks"); return }
+                guard let wrapper = json["artists"] as? [String:Any] else { print("cannot access tracks"); return }
                 
-                guard let artists = wrapper.value(forKey: "items") as? NSArray else { print("cannot make array from all items"); return }
+                guard let artists = wrapper["items"] as? [Any] else { print("cannot make array from all items"); return }
                 
-                for artist in artists {
-                    let a = artist as! NSDictionary
-                    self.filteredTableArtistsData.append(a)
-                }
+                self.filteredTableArtistsData = artists
                 DispatchQueue.main.async {
                     
                     self.tableView.reloadData()
@@ -71,7 +137,6 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
                 break
         case 0:
             
-            self.filteredTableTracksData.removeAll()
             
             let searchURL = URL(string:"https://api.spotify.com/v1/search?q=\(formattedSearch)&type=track")
             
@@ -85,25 +150,14 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
                     return
                 }
                 
-                let json = try! JSONSerialization.jsonObject(with: data, options: []) as! NSDictionary
+                let json = try! JSONSerialization.jsonObject(with: data, options: []) as! [String:Any]
                 
                 
-                guard let wrapper = json.value(forKeyPath: "tracks") as? NSDictionary else { print("cannot access tracks"); return }
+                guard let wrapper = json["tracks"] as? [String:Any] else { print("cannot access tracks"); return }
                 
-                guard let tracks = wrapper.value(forKey: "items") as? NSArray else { print("cannot make array from all items"); return }
+                guard let tracks = wrapper["items"] as? [Any] else { print("cannot make array from all items"); return }
+                self.filteredTableTracksData = tracks
                 
-                for track in tracks {
-                    let t = track as! NSDictionary
-                    guard let name = t["name"] as? String else {return}
-                    guard let artists = t["artists"] as? NSArray else { return }
-                    guard let artist = artists[0] as? NSDictionary else { return }
-                    guard let artistName = artist["name"] as? String else {return}
-                    guard let album = t["album"] as? NSDictionary else { return }
-                    guard let albumName = album["name"] as? String else { return }
-                    guard let uri = t["uri"] as? String else {return}
-                    print("\(name) by \(artistName) off of the album \(albumName) | \(uri)")
-                    self.filteredTableTracksData.append(t)
-                }
                 DispatchQueue.main.async {
                     
                     self.tableView.reloadData()
@@ -179,6 +233,10 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
                 return self.filteredTableTracksData.count
             case 1:
                 return self.filteredTableArtistsData.count
+            case 2:
+                return self.filteredTableAlbumsData.count
+            case 3:
+                return self.filteredTablePlaylistsData.count
             default:
                 return 0
             }
@@ -196,7 +254,7 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
             switch segments.selectedSegmentIndex {
             case 0:
                 // Tracks
-                let track = filteredTableTracksData[indexPath.row]
+                guard let track = filteredTableTracksData[indexPath.row] as? [String:Any] else { return cell}
                 cell.titleLabel.text = track["name"] as? String
                 guard let artists = track["artists"] as? NSArray else {return cell}
                 
@@ -209,10 +267,36 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
             case 1:
                 // Artists
                 
-                let artist = filteredTableArtistsData[indexPath.row]
-                cell.artistLabel.text = artist.value(forKey: "name") as? String
+                guard let artist = filteredTableArtistsData[indexPath.row] as? [String:Any] else {return cell}
+                cell.artistLabel.text = artist["name"] as? String
                 cell.albumLabel.text = ""
                 cell.titleLabel.text = ""
+                break
+            case 2:
+                //albums
+                
+                guard let album = filteredTableAlbumsData[indexPath.row] as? [String:Any] else {return cell}
+                
+                cell.albumLabel.text = album["name"] as? String
+                
+                guard let artists = album["artists"] as? [Any] else { return cell}
+                
+                guard let artist = artists[0] as? [String:Any] else { return cell}
+                
+                cell.artistLabel.text = artist["name"] as? String
+                
+                cell.titleLabel.text = ""
+                break
+            case 3:
+                guard let playlist = filteredTablePlaylistsData[indexPath.row] as? [String:Any] else {return cell}
+            
+                cell.titleLabel.text = playlist["name"] as? String
+                
+                guard let owner = playlist["owner"] as? [String:Any] else { return cell}
+                cell.artistLabel.text = owner["id"] as? String
+                guard let tracks = playlist["tracks"] as? [String:Any] else {return cell }
+                guard let total = tracks["total"] as? Int else {return cell}
+                cell.albumLabel.text = "\(total) tracks"
                 break
             default:
                 print("other segment selected, do nothing")
@@ -229,47 +313,13 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
             switch segments.selectedSegmentIndex {
             // Title
             case 0:
-                
-                let track = filteredTableTracksData[indexPath.row] as NSDictionary
-                
-                guard let uri = track.object(forKey: "uri") as? String else { return}
-                
-                if let player = player {
-                    if let ps = player.playbackState {
-                        if !ps.isPlaying {
-                            player.playSpotifyURI(uri, startingWith: 0, startingWithPosition: 0, callback: { (error:Error?) in
-                                guard error == nil else { print(error!);return }
-                                print("track started \(uri)")
-                                
-                            })
-                        } else {
-                            guard var rItems = self.navigationItem.rightBarButtonItems else { return }
-                            if rItems.count < 2 {
-                                rItems.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.fastForward, target: self, action: #selector(self.skipTrack)))
-                                self.navigationItem.setRightBarButtonItems(rItems, animated: true)
-                            } else {
-                                rItems[0] = UIBarButtonItem(barButtonSystemItem: .fastForward, target: self, action: #selector(self.skipTrack))
-                                self.navigationItem.setRightBarButtonItems(rItems, animated: true)
-                            }
-                            player.queueSpotifyURI(uri, callback: { (error:Error?) in
-                                guard error == nil else { print(error!); return }
-                                
-                            })
-                        }
-                    } else {
-                        
-                        
-                        player.playSpotifyURI(uri, startingWith: 0, startingWithPosition: 0, callback: { (error:Error?) in
-                            guard error == nil else { print(error!);return }
-                            print("track started \(uri)")
-                            
-                        })
-                        navigationItem.rightBarButtonItems = [UIBarButtonItem(barButtonSystemItem: .pause, target: self, action: #selector(self.pausePlayer)),UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.fastForward, target: self, action: #selector(self.skipTrack))]
-                    }
-                }
+                guard let track = filteredTableTracksData[indexPath.row] as? [String:Any] else {return}
+                selectedTrack = track
+                performSegue(withIdentifier: "showTrack", sender: self)
                 break
             case 1:
-                selectedArtist = filteredTableArtistsData[indexPath.row]
+                guard let artist = filteredTableArtistsData[indexPath.row] as? [String:Any] else {return}
+                selectedArtist = artist
                 performSegue(withIdentifier: "showArtist", sender: self)
                 break
             default:
@@ -316,16 +366,13 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
         guard ps.isPlaying else { p.setIsPlaying(true, callback: { (error:Error?) in
             guard error == nil else { print(error!); return }
             
-            guard let rItems = self.navigationItem.rightBarButtonItems, let l = rItems.last else { return }
-            
-            self.navigationItem.setRightBarButtonItems([UIBarButtonItem(barButtonSystemItem: .pause, target: self, action: #selector(self.pausePlayer)), l], animated: true)
+            self.navigationItem.setRightBarButtonItems([UIBarButtonItem(barButtonSystemItem: .pause, target: self, action: #selector(self.pausePlayer))], animated: true)
             print("playing")
         }); return }
         p.setIsPlaying(false) { (error:Error?) in
             guard error == nil else { print(error!); return }
-            guard let rItems = self.navigationItem.rightBarButtonItems, let l = rItems.last else { return }
             
-            self.navigationItem.setRightBarButtonItems([UIBarButtonItem(barButtonSystemItem: .play, target: self, action: #selector(self.pausePlayer)), l], animated: true)
+            self.navigationItem.setRightBarButtonItems([UIBarButtonItem(barButtonSystemItem: .play, target: self, action: #selector(self.pausePlayer))], animated: true)
             print("pausing")
         }
     }
@@ -375,6 +422,10 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
         if segue.identifier == "showArtist" {
             guard let dest = segue.destination as? ArtistViewController else { return }
             dest.artist = self.selectedArtist
+            self.searchController.searchBar.isHidden = true
+        } else if segue.identifier == "showTrack" {
+            guard let dest = segue.destination as? TrackViewController else { return }
+            dest.track = self.selectedTrack
             self.searchController.searchBar.isHidden = true
         } else {
             print("attempting unknown segue")
