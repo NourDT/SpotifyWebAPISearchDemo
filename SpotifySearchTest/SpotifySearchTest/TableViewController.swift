@@ -27,7 +27,6 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
     var filteredTableArtistsData:[Any] = []
     var filteredTableAlbumsData:[Any] = []
     var filteredTablePlaylistsData:[Any] = []
-    var tableData:[Any] = []
     
     var searchController:UISearchController!
     
@@ -44,6 +43,7 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
         
         switch segments.selectedSegmentIndex {
         case 3:
+            // playlist search
             let searchURL = URL(string:"https://api.spotify.com/v1/search?q=\(formattedSearch)&type=playlist")
             let task = URLSession.shared.dataTask(with: searchURL!) { data, response, error in
                 guard error == nil else {
@@ -75,7 +75,7 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
             task.resume()
             break
         case 2:
-            
+            // album search
             let searchURL = URL(string:"https://api.spotify.com/v1/search?q=\(formattedSearch)&type=album")
             let task = URLSession.shared.dataTask(with: searchURL!) { data, response, error in
                 guard error == nil else {
@@ -107,8 +107,7 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
             task.resume()
             break
         case 1:
-            
-            
+            // artist search
             let searchURL = URL(string:"https://api.spotify.com/v1/search?q=\(formattedSearch)&type=artist")
             
             let task = URLSession.shared.dataTask(with: searchURL!) { data, response, error in
@@ -136,8 +135,7 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
             task.resume()
                 break
         case 0:
-            
-            
+            // track search
             let searchURL = URL(string:"https://api.spotify.com/v1/search?q=\(formattedSearch)&type=track")
             
             let task = URLSession.shared.dataTask(with: searchURL!) { data, response, error in
@@ -204,6 +202,7 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
         self.tableView.reloadData()
         
         segments.addTarget(self, action: #selector(self.valueChanged), for: .valueChanged)
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -241,7 +240,7 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
                 return 0
             }
         }
-        return self.tableData.count
+        return 0
     }
     
     
@@ -256,11 +255,11 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
                 // Tracks
                 guard let track = filteredTableTracksData[indexPath.row] as? [String:Any] else { return cell}
                 cell.titleLabel.text = track["name"] as? String
-                guard let artists = track["artists"] as? NSArray else {return cell}
+                guard let artists = track["artists"] as? [Any] else {return cell}
                 
-                guard let artist = artists[0] as? NSDictionary else {return cell}
+                guard let artist = artists[0] as? [String:Any] else {return cell}
             cell.artistLabel.text = artist["name"] as? String
-                guard let album = track["album"] as? NSDictionary else { return cell }
+                guard let album = track["album"] as? [String:Any] else { return cell }
                 cell.albumLabel.text = album["name"] as? String
                 
             break
