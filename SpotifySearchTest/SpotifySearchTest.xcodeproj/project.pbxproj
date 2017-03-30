@@ -306,7 +306,7 @@
 				);
 				INFOPLIST_FILE = SpotifySearchTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_LDFLAGS = "-objC";
+				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_BUNDLE_IDENTIFIER = com.apatrickstar.SpotifySearchTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SpotifySearchTest-Bridging-Header.h";
@@ -327,7 +327,7 @@
 				);
 				INFOPLIST_FILE = SpotifySearchTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_LDFLAGS = "-objC";
+				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_BUNDLE_IDENTIFIER = com.apatrickstar.SpotifySearchTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SpotifySearchTest-Bridging-Header.h";
