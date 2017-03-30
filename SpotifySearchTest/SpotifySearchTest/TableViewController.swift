@@ -211,6 +211,8 @@ class TableViewController: UITableViewController, UISearchResultsUpdating {
                 
                 let artist = filteredTableArtistsData[indexPath.row]
                 cell.artistLabel.text = artist.value(forKey: "name") as? String
+                cell.albumLabel.text = ""
+                cell.titleLabel.text = ""
                 break
             default:
                 print("other segment selected, do nothing")
